@@ -1,8 +1,13 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import PushController from './PushController';
-import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, FlatList } from 'react-native';
+import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, FlatList, TouchableOpacity } from 'react-native';
 import { Header, LearnMoreLinks, Colors, DebugInstructions, ReloadInstructions } from 'react-native/Libraries/NewAppScreen';
+import PushNotification from "react-native-push-notification";
 // Dummy data for list, we'll replace this with data received from push
+
+
+
+
 let pushData = [
   {
     title: "First push",
@@ -13,13 +18,61 @@ let pushData = [
     message: "Second push message"
   }
 ]
-_renderItem = ({ item }) => (
-  <View key={item.title}>
-    <Text style={styles.title}>{item.title}</Text>
-    <Text style={styles.message}>{item.message}</Text>
-  </View>
-);
+
+
+
+
+// _renderItem = ({ item }) => (
+//   <TouchableOpacity
+//     onPress={() => handleNotification()}
+//   >
+//     <View key={item.title}>
+//       <Text style={styles.title}>{item.title}</Text>
+//       <Text style={styles.message}>{item.message}</Text>
+//     </View>
+//   </TouchableOpacity>
+
+// );
+
+
+
+
 const App = () => {
+
+  useEffect(() => {
+    createChannels();
+
+  }, [])
+
+  const createChannels = () => {
+    PushNotification.createChannel(
+      {
+        channelId: "default",
+        channelName: "Default",
+        // sound: true,
+        // vibrate: true,
+      }
+    )
+  }
+
+  const handleNotification = (item) => {
+    PushNotification.localNotification({
+      channelId: "default",
+      title: "you clicked on " + item.title,
+      message: item.message,
+      bigText: "You have entered the tomb of the ancient king",
+    })
+
+    PushNotification.localNotificationSchedule({
+      channelId: "default",
+      title: "you clicked on " + item.title + " sometime ago", 
+      message: item.message,
+      date: new Date(Date.now() + (30 * 1000));
+      allowWhileIdle: true,
+    })
+
+  }
+
   return (
     <Fragment>
       <StatusBar barStyle="dark-content" />
@@ -34,10 +87,18 @@ const App = () => {
           <View style={styles.body}>
             <FlatList
               data={pushData}
-              renderItem={(item) => this._renderItem(item)}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => handleNotification(item)}
+                >
+                  <View key={item.title}>
+                    <Text style={styles.title}>{item.title}</Text>
+                    <Text style={styles.message}>{item.message}</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
               keyExtractor={(item) => item.title}
             />
-            {/* <LearnMoreLinks /> */}
           </View>
         </ScrollView>
       </SafeAreaView>
