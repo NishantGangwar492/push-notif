@@ -10,11 +10,11 @@ import PushNotification from "react-native-push-notification";
 
 let pushData = [
   {
-    title: "First push",
+    title: "SD 888",
     message: "First push message"
   },
   {
-    title: "Second push",
+    title: "DIMENSITY 7000",
     message: "Second push message"
   }
 ]
@@ -65,9 +65,9 @@ const App = () => {
 
     PushNotification.localNotificationSchedule({
       channelId: "default",
-      title: "you clicked on " + item.title + " sometime ago", 
+      title: "you clicked on " + item.title + " 30 seconds ago", 
       message: item.message,
-      date: new Date(Date.now() + (30 * 1000));
+      date: new Date(Date.now() + (30 * 1000)),
       allowWhileIdle: true,
     })
 
